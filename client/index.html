@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Braintree</title>
+	<!-- Jquery CDN -->
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="transaction">
+	<table style="width:100%" class="table">
+  		<tr>
+  			<th> Transaction id </th>
+  			<th> Amount </th>
+  			<th> Merchant account id </th>
+  			<th> Created at </th>
+  		</tr>
+  		<tr class="val">
+    		
+  		</tr>
+	</table> 
+
+</div>
+<form id="brain" class="form-horizontal">
+<fieldset>
+
+<!-- Form Name -->
+<legend>Braintree</legend>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="username">Username</label>  
+  <div class="col-md-6">
+  <input id="username" name="username" placeholder="Username" class="form-control input-md" required="" type="text">
+    
+  </div>
+</div>
+
+<!-- Password input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="password">Password</label>
+  <div class="col-md-6">
+    <input id="password" name="password" placeholder="Password" class="form-control input-md" required="" type="password">
+    <span class="help-block">Forget Password</span>
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="submit"></label>
+  <div class="col-md-4">
+    <button id="submit" name="submit" class="btn btn-success">Submit</button>
+  </div>
+</div>
+
+</fieldset>
+</form>
+<script type="text/javascript">
+	$(".transaction").hide();
+	$( "#brain" ).submit(function( event ) {
+    // alert( "Handler for .submit() called." );
+    event.preventDefault();
+		$.ajax({
+  			url: 'http://localhost:3000/api/braintrees',
+  			beforeSend: function (xhr) {
+   			 xhr.setRequestHeader ("Authorization", "Basic " + btoa('braintree' + ":" + 'password'));
+ 			}
+		})
+  		.done(function(data) {
+    	 	showTransaction(data);
+    	 	console.log(data);
+  		})
+  		.fail(function() {
+    	alert( "error" );
+  		});
+  	});
+  	function showTransaction(data){
+  		$(".transaction").show();
+  		$("#brain").hide();
+  		for (var key in data){
+			var $tr = $('<tr/>');
+			    $tr.append($('<td/>').html(data[key].id));
+			    $tr.append($('<td/>').html(data[key].amount));
+			    $tr.append($('<td/>').html(data[key].created_at));
+			    $tr.append($('<td/>').html(data[key].merchant_account_id));
+			    $('.transaction tr:last').before($tr);
+		}
+  		
+  	}
+</script>
+
+</body>
+</html>
